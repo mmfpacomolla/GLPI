@@ -26845,6 +26845,6 @@ msgstr "puede que tenga que añadir una red"
 msgid "⌥ (option) + ⌘ (command) + E"
 msgstr "⌥ (Opción) + ⌘ (Comando) + E"
 
-#PACO MOLLA - TRADUCCIONES
+#: PACO MOLLA - TRADUCCIONES
 msgid "dateReservation"
 msgstr "Fecha de reserva"
