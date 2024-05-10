@@ -19611,7 +19611,7 @@ msgstr[1] "Activos reservables"
 msgid "Reservation"
 msgid_plural "Reservations"
 msgstr[0] "Reservas"
-msgstr[1] "Reservas"
+#: msgstr[1] "Reservas"
 
 #: src/Reservation.php:262
 #, php-format
