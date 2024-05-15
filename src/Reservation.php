@@ -195,11 +195,8 @@ class Reservation extends CommonDBChild
         //Me quedo únicamente con la fecha (sin hora)
         $beginDate = explode(' ', $input['resa']["begin"])[0];
 
-        //Obtengo las horas del valor elegido en el input
-        $string = "1º 7:55-8:50";//TODO
-
-        // Primero, eliminamos la parte "1º "
-        $timePart = explode(' ', $string, 2)[1];
+        //Obtengo las horas del valor elegido en el input y eliminamos la parte "1º "
+        $timePart = explode(' ', Reservation::$pacoMollaSchedule[$input['pm_schedule']], 2)[1];
 
         // Luego, separamos las dos horas usando el guion como delimitador
         $times = explode('-', $timePart);
