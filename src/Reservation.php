@@ -47,12 +47,14 @@ class Reservation extends CommonDBChild
     public static $rightname                = 'reservation';
     public static $checkParentRights = self::HAVE_VIEW_RIGHT_ON_ITEM;
 
+    #PACO MOLLA - MODIFICATION - Se crea el array de horarios del centro para asignarlo al Select de las reservas
     public static $pacoMollaSchedule = array(
         '1' => '1º 07:55-8:50', '2' => '2º 08:50-9:45', '3' => '3º 09:45-10:50', '4' => '4º 11:00-11:55',
         '5' => '5º 11:55-12:50', '6' => '6º 12:50-13:45', '7' => '7º 14:00-14:55', '8' => '8º 15:00-15:55',
         '9' => '9º 15:55-16:50', '10' => '10º 16:50-17:45', '11' => '11º 18:05-19:00', '12' => '12º 19:00-19:55',
         '13' => '13º 19:55-20:50'
     );
+    #-------------------------------------------------------------------------------------------------------------
 
     /**
      * @param $nb  integer  for singular or plural
@@ -188,6 +190,7 @@ class Reservation extends CommonDBChild
         return parent::prepareInputForAdd($input);
     }
 
+    #PACO MOLLA - MODIFICATION - Función propia para gestionar las fechas seleccionadas mediante nuestro selector
     public static function handlePacoMollaSchedule(array &$input): void {
         //Me quedo únicamente con la fecha (sin hora)
         $beginDate = explode(' ', $input['resa']["begin"])[0];
@@ -204,6 +207,7 @@ class Reservation extends CommonDBChild
         $input['resa']["begin"] = $beginDate . " " . $firstHour;
         $input['resa']["end"] = $beginDate . " " . $secondHour;
     }
+    #-------------------------------------------------------------------------------
 
     public static function handleAddForm(array $input): void
     {
@@ -211,16 +215,21 @@ class Reservation extends CommonDBChild
             $input['users_id'] = Session::getLoginUserID();
         }
         if (
+        #PACO MOLLA - MODIFICATION - Establecer que con el permiso "Hacer reserva" se pueda reservar
+        #Se comenta la línea y se cambia el tipo de permiso
 	    //!Session::haveRight("reservation", UPDATE)
-	    //PACO MOLLA - MODIFICATION - Establecer que con el permiso "Hacer reserva" se pueda reservar
 	    !Session::haveRight("reservation",ReservationItem::RESERVEANITEM)
             && Session::getLoginUserID() !== $input['users_id']
 	) {
             return;
 	}
-        #PACO MOLLA
+
+        #PACO MOLLA - MODIFICATION --------------------------
+        #Se ha comentado la línea siguiente y se realiza la llamada a nuestra función
         //Toolbox::manageBeginAndEndPlanDates($input['resa']);
         Reservation::handlePacoMollaSchedule($input);
+        #-----------------------------------------------------
+
         if (!isset($input['resa']["begin"]) || !isset($input['resa']["end"])) {
             return;
         }
@@ -782,7 +791,8 @@ JAVASCRIPT;
         ]);
     }
 
-    #PACO MOLLA
+    #PACO MOLLA - MODIFICATION - Función propia para marcar el valor correspondiente del select de horario
+    #a la hora de realizar una actualización de una reserva
     public static function selectPacoMollaValue($dateBegin) : string {
         //Me quedo únicamente con la hora
         $inputTime = explode(' ', $dateBegin)[1];
@@ -804,6 +814,7 @@ JAVASCRIPT;
 
         return !is_null($matchingKey) ? $matchingKey : '1';
     }
+    #-----------------------------------------------------------------------------------------------------
 
 
     /**
@@ -928,86 +939,98 @@ JAVASCRIPT;
             ]);
         }
         echo "</td></tr>\n";
-	#PACO MOLLA - MODIFICATION - Modificar traduccion
-	echo "<tr class='tab_bg_2'><td>" . /*__('Start date')*/__('dateReservation'). "</td><td>";
-        #PACO MOLLA - MODIFICATION - Cambiar datetime por date
-        // Html::showDateTimeField("resa[begin]", [
-        //     'value'      => $resa->fields["begin"],
-        //     'maybeempty' => false
-        // ]);
+	
+        #PACO MOLLA - MODIFICATION - Modificar traduccion Start date por dateReservation
+        echo "<tr class='tab_bg_2'><td>" . /*__('Start date')*/__('dateReservation'). "</td><td>";
+        #-----------------------------------------------------------------------------
+        
+        #PACO MOLLA - MODIFICATION - Cambiar showDateTimeField por showDateField - De esta forma tenemos un input sin hora
+        /* Html::showDateTimeField("resa[begin]", [
+            'value'      => $resa->fields["begin"],
+            'maybeempty' => false
+        ]); */
         Html::showDateField("resa[begin]", [
             'value'      => $resa->fields["begin"],
             'maybeempty' => false
         ]);
+        #-----------------------------------------------------------------------------
+
         echo "</td></tr>";
-         #PACO MOLLA
-         echo "<tr class='tab_bg_2'><td>" . __('Duration') . "</td><td>";
-         $pruebas = Dropdown::showFromArray(
-            "pm_schedule",
-            Reservation::$pacoMollaSchedule
+
+        #PACO MOLLA - MODIFICATION - Añado un Select personalizado con los valores del horario
+        echo "<tr class='tab_bg_2'><td>" . __('Duration') . "</td><td>";
+        $pruebas = Dropdown::showFromArray(
+           "pm_schedule",
+           Reservation::$pacoMollaSchedule
         ,[
-            //Especifio el valor por defecto, 1 si es crear y busco el valor si es editar
-            "value" => Reservation::selectPacoMollaValue($resa->fields["begin"])
+           //Especifio el valor por defecto, 1 si es crear para seleccionar la primera opción y
+           //si es actualizar, se selecciona la opción guardada
+           "value" => Reservation::selectPacoMollaValue($resa->fields["begin"])
         ]);
-        // $default_delay = floor((strtotime($resa->fields["end"]) - strtotime($resa->fields["begin"]))
-        //                      / $CFG_GLPI['time_step'] / MINUTE_TIMESTAMP)
-        //                * $CFG_GLPI['time_step'] * MINUTE_TIMESTAMP;
-        // echo "<tr class='tab_bg_2'><td>" . __('Duration') . "</td><td>";
-        // $rand = Dropdown::showTimeStamp("resa[_duration]", [
-        //     'min'        => 0,
-        //     'max'        => 24 * HOUR_TIMESTAMP,
-        //     'value'      => $default_delay,
-        //     'emptylabel' => __('Specify an end date'),
-        //     'allow_max_change' => false
-        // ]);
+        #-----------------------------------------------------------------------------
 
-        // echo "<br><div id='date_end$rand'></div>";
-        // $params = [
-        //     'duration'     => '__VALUE__',
-        //     'end'          => $resa->fields["end"],
-        //     'name'         => "resa[end]"
-        // ];
-        // Ajax::updateItemOnSelectEvent(
-        //     "dropdown_resa[_duration]$rand",
-        //     "date_end$rand",
-        //     $CFG_GLPI["root_doc"] . "/ajax/planningend.php",
-        //     $params
-        // );
+        #PACO MOLLA - MODIFICATION - Comento los campos relacionados con la selección original de la duración de la reserva
+        /* $default_delay = floor((strtotime($resa->fields["end"]) - strtotime($resa->fields["begin"]))
+                             / $CFG_GLPI['time_step'] / MINUTE_TIMESTAMP)
+                       * $CFG_GLPI['time_step'] * MINUTE_TIMESTAMP;
+        echo "<tr class='tab_bg_2'><td>" . __('Duration') . "</td><td>";
+        $rand = Dropdown::showTimeStamp("resa[_duration]", [
+            'min'        => 0,
+            'max'        => 24 * HOUR_TIMESTAMP,
+            'value'      => $default_delay,
+            'emptylabel' => __('Specify an end date'),
+            'allow_max_change' => false
+        ]);
 
-        // if ($default_delay == 0) {
-        //     $params['duration'] = 0;
-        //     Ajax::updateItem("date_end$rand", $CFG_GLPI["root_doc"] . "/ajax/planningend.php", $params);
-        // }
+        echo "<br><div id='date_end$rand'></div>";
+        $params = [
+            'duration'     => '__VALUE__',
+            'end'          => $resa->fields["end"],
+            'name'         => "resa[end]"
+        ];
+        Ajax::updateItemOnSelectEvent(
+            "dropdown_resa[_duration]$rand",
+            "date_end$rand",
+            $CFG_GLPI["root_doc"] . "/ajax/planningend.php",
+            $params
+        );
+
+        if ($default_delay == 0) {
+            $params['duration'] = 0;
+            Ajax::updateItem("date_end$rand", $CFG_GLPI["root_doc"] . "/ajax/planningend.php", $params);
+        } */
+        #-----------------------------------------------------------------------------
         Alert::displayLastAlert('Reservation', $ID);
         echo "</td></tr>";
 
-	//PACO MOLLA - MODIFICATION - Evitar que se pueda reservar con periodicidad
-	/*
-        if (empty($ID)) {
-            echo "<tr class='tab_bg_2'><td>" . __('Repetition') . "</td>";
-            echo "<td>";
-            $rand = Dropdown::showFromArray('periodicity[type]', [
-                ''      => _x('periodicity', 'None'),
-                'day'   => _x('periodicity', 'Daily'),
-                'week'  => _x('periodicity', 'Weekly'),
-                'month' => _x('periodicity', 'Monthly')
-            ]);
-            $field_id = Html::cleanId("dropdown_periodicity[type]$rand");
+        //PACO MOLLA - MODIFICATION - Comento el campo que permite reservar con periodicidad
+        /*
+            if (empty($ID)) {
+                echo "<tr class='tab_bg_2'><td>" . __('Repetition') . "</td>";
+                echo "<td>";
+                $rand = Dropdown::showFromArray('periodicity[type]', [
+                    ''      => _x('periodicity', 'None'),
+                    'day'   => _x('periodicity', 'Daily'),
+                    'week'  => _x('periodicity', 'Weekly'),
+                    'month' => _x('periodicity', 'Monthly')
+                ]);
+                $field_id = Html::cleanId("dropdown_periodicity[type]$rand");
 
-            Ajax::updateItemOnSelectEvent(
-                $field_id,
-                "resaperiodcontent$rand",
-                $CFG_GLPI["root_doc"] . "/ajax/resaperiod.php",
-                [
-                    'type'     => '__VALUE__',
-                    'end'      => $resa->fields["end"]
-                ]
-            );
-            echo "<br><div id='resaperiodcontent$rand'></div>";
+                Ajax::updateItemOnSelectEvent(
+                    $field_id,
+                    "resaperiodcontent$rand",
+                    $CFG_GLPI["root_doc"] . "/ajax/resaperiod.php",
+                    [
+                        'type'     => '__VALUE__',
+                        'end'      => $resa->fields["end"]
+                    ]
+                );
+                echo "<br><div id='resaperiodcontent$rand'></div>";
 
-            echo "</td></tr>";
-        }
-	*/
+                echo "</td></tr>";
+            }
+        */
+        #-----------------------------------------------------------------------------
 
         echo "<tr class='tab_bg_2'><td>" . __('Comments') . "</td>";
         echo "<td><textarea name='comment' rows='8' class='form-control'>" . $resa->fields["comment"] . "</textarea>";

@@ -59,9 +59,11 @@ if (isset($_REQUEST['ajax'])) {
 }
 
 if (isset($_POST["update"])) {
+    #PACO MOLLA - MODIFICATION --------------------------
+    #Se ha comentado la línea siguiente y se realiza la llamada a nuestra función
     //Toolbox::manageBeginAndEndPlanDates($_POST['resa']);
-    #PACO MOLLA
     Reservation::handlePacoMollaSchedule($_POST);
+    #-----------------------------------------------------
     if (
         Session::haveRight("reservation", UPDATE)
         || (Session::getLoginUserID() == $_POST["users_id"])
