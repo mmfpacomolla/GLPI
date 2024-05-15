@@ -890,8 +890,8 @@ JAVASCRIPT;
         // ]);
         Html::showDateField("resa[begin]", [
             'value'      => $resa->fields["begin"],
-            'maybeempty' => false,
-            'canedit' => false
+            'maybeempty' => false
+            //'canedit' => false
         ]);
         echo "</td></tr>";
         $default_delay = floor((strtotime($resa->fields["end"]) - strtotime($resa->fields["begin"]))
