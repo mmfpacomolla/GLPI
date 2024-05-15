@@ -182,6 +182,11 @@ class Reservation extends CommonDBChild
         return parent::prepareInputForAdd($input);
     }
 
+    public static function handlePacoMollaSchedule(array $input): array {
+        $input['resa']["begin"] = "2024-05-30 15:00:00";
+        $input['resa']["end"] = "2024-05-30 19:00:00";
+    }
+
     public static function handleAddForm(array $input): void
     {
         if (empty($input['users_id'])) {
@@ -208,6 +213,8 @@ class Reservation extends CommonDBChild
                 ERROR
             );
         }
+
+        Reservation::handlePacoMollaSchedule($input);
 
         $dates_to_add = [];
         $dates_to_add[$input['resa']["begin"]] = $input['resa']["end"];
@@ -924,7 +931,7 @@ JAVASCRIPT;
         }
         Alert::displayLastAlert('Reservation', $ID);
         $pruebas = Dropdown::showFromArray(
-            "resa[_pm_schedule]",
+            "pm_schedule",
             array(
                 '1' => '1º 7:55-8:50', '2' => '2º 8:50-9:45', '3' => '3º 9:45-10:50', '4' => '4º 11:00-11:55',
                 '5' => '5º 155:12:50', '6' => '6º 12:50-13:45', '7' => '7º 14:00-14:55', '8' => '8º 15:00-15:55',
