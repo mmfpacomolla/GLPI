@@ -883,13 +883,15 @@ JAVASCRIPT;
         echo "</td></tr>\n";
 	#PACO MOLLA - MODIFICATION - Modificar traduccion
 	echo "<tr class='tab_bg_2'><td>" . /*__('Start date')*/__('dateReservation'). "</td><td>";
+        #PACO MOLLA - MODIFICATION - Cambiar datetime por date
         // Html::showDateTimeField("resa[begin]", [
         //     'value'      => $resa->fields["begin"],
         //     'maybeempty' => false
         // ]);
         Html::showDateField("resa[begin]", [
             'value'      => $resa->fields["begin"],
-            'maybeempty' => false
+            'maybeempty' => false,
+            'canedit' => false
         ]);
         echo "</td></tr>";
         $default_delay = floor((strtotime($resa->fields["end"]) - strtotime($resa->fields["begin"]))
@@ -921,6 +923,12 @@ JAVASCRIPT;
             Ajax::updateItem("date_end$rand", $CFG_GLPI["root_doc"] . "/ajax/planningend.php", $params);
         }
         Alert::displayLastAlert('Reservation', $ID);
+        $pruebas = Dropdown::showFromArray(
+            "resa[_pm_schedule]",
+            array('7:55-8:50' => '1', '8:50-9:45' => '2')
+        ,[
+            "value" => '1'
+        ]);
         echo "</td></tr>";
 
 	//PACO MOLLA - MODIFICATION - Evitar que se pueda reservar con periodicidad
