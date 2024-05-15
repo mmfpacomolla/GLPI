@@ -194,7 +194,6 @@ class Reservation extends CommonDBChild
 
         //Me quedo únicamente con la fecha (sin hora)
         $beginDate = explode(' ', $input['resa']["begin"])[0];
-        $endDate = explode(' ', $input['resa']["end"])[0];
 
         //Obtengo las horas del valor elegido en el input
         $string = "1º 7:55-8:50";//TODO
@@ -209,7 +208,7 @@ class Reservation extends CommonDBChild
         $secondHour = $times[1];
 
         $input['resa']["begin"] = $beginDate . " " . $firstHour;
-        $input['resa']["end"] = $endDate . " " . $secondHour;
+        $input['resa']["end"] = $beginDate . " " . $secondHour;
     }
 
     public static function handleAddForm(array $input): void
