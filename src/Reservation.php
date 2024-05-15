@@ -881,9 +881,13 @@ JAVASCRIPT;
             ]);
         }
         echo "</td></tr>\n";
-	#PACO MOLLA - MODIFICATION - Modificar traducci√n
+	#PACO MOLLA - MODIFICATION - Modificar traduccion
 	echo "<tr class='tab_bg_2'><td>" . /*__('Start date')*/__('dateReservation'). "</td><td>";
-        Html::showDateTimeField("resa[begin]", [
+        // Html::showDateTimeField("resa[begin]", [
+        //     'value'      => $resa->fields["begin"],
+        //     'maybeempty' => false
+        // ]);
+        Html::showDateField("resa[begin]", [
             'value'      => $resa->fields["begin"],
             'maybeempty' => false
         ]);
