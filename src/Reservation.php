@@ -923,19 +923,23 @@ JAVASCRIPT;
                              / $CFG_GLPI['time_step'] / MINUTE_TIMESTAMP)
                        * $CFG_GLPI['time_step'] * MINUTE_TIMESTAMP;
         echo "<tr class='tab_bg_2'><td>" . __('Duration') . "</td><td>";
-        // $rand = Dropdown::showTimeStamp("resa[_duration]", [
-        //     'min'        => 0,
-        //     'max'        => 24 * HOUR_TIMESTAMP,
-        //     'value'      => $default_delay,
-        //     'emptylabel' => __('Specify an end date'),
-        //     'allow_max_change' => false
-        // ]);
+        $rand = Dropdown::showTimeStamp("resa[_duration]", [
+            'min'        => 0,
+            'max'        => 24 * HOUR_TIMESTAMP,
+            'value'      => $default_delay,
+            'emptylabel' => __('Specify an end date'),
+            'allow_max_change' => false,
+            'display' => false //PACO MOLLA
+        ]);
+
+        #PACO MOLLA
         $pruebas = Dropdown::showFromArray(
             "pm_schedule",
             Reservation::$pacoMollaSchedule
         ,[
             "value" => '1'
         ]);
+
         echo "<br><div id='date_end$rand'></div>";
         $params = [
             'duration'     => '__VALUE__',
