@@ -48,7 +48,7 @@ class Reservation extends CommonDBChild
     public static $checkParentRights = self::HAVE_VIEW_RIGHT_ON_ITEM;
 
     public static $pacoMollaSchedule = array(
-        '1' => '1º 7:55-8:50', '2' => '2º 8:50-9:45', '3' => '3º 9:45-10:50', '4' => '4º 11:00-11:55',
+        '1' => '1º 07:55-8:50', '2' => '2º 08:50-9:45', '3' => '3º 09:45-10:50', '4' => '4º 11:00-11:55',
         '5' => '5º 11:55-12:50', '6' => '6º 12:50-13:45', '7' => '7º 14:00-14:55', '8' => '8º 15:00-15:55',
         '9' => '9º 15:55-16:50', '10' => '10º 16:50-17:45', '11' => '11º 18:05-19:00', '12' => '12º 19:00-19:55',
         '13' => '13º 19:55-20:50'
@@ -782,6 +782,29 @@ JAVASCRIPT;
         ]);
     }
 
+    #PACO MOLLA
+    public static function selectPacoMollaValue($dateBegin) : string {
+        //Me quedo únicamente con la hora
+        $inputTime = explode(' ', $dateBegin)[1];
+
+        $inputHour = substr($inputTime, 0, 5); // Extrae solo la hora y los minutos "07:55"
+
+        $matchingKey = null;
+
+        foreach (Reservation::$pacoMollaSchedule as $key => $value) {
+            // Extrae la primera hora del valor
+            $firstHour = substr(explode(' ', $value)[1], 0, 5);
+            
+            // Compara la primera hora con la hora de entrada
+            if ($firstHour === $inputHour) {
+                $matchingKey = $key;
+                break;
+            }
+        }
+
+        return !is_null($matchingKey) ? $matchingKey : '1';
+    }
+
 
     /**
      * Display for reservation
@@ -915,7 +938,6 @@ JAVASCRIPT;
         Html::showDateField("resa[begin]", [
             'value'      => $resa->fields["begin"],
             'maybeempty' => false
-            //'canedit' => false
         ]);
         echo "</td></tr>";
          #PACO MOLLA
@@ -924,7 +946,8 @@ JAVASCRIPT;
             "pm_schedule",
             Reservation::$pacoMollaSchedule
         ,[
-            "value" => '1'
+            //Especifio el valor por defecto, 1 si es crear y busco el valor si es editar
+            "value" => Reservation::selectPacoMollaValue($resa->fields["begin"])
         ]);
         // $default_delay = floor((strtotime($resa->fields["end"]) - strtotime($resa->fields["begin"]))
         //                      / $CFG_GLPI['time_step'] / MINUTE_TIMESTAMP)
