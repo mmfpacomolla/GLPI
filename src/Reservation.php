@@ -47,6 +47,12 @@ class Reservation extends CommonDBChild
     public static $rightname                = 'reservation';
     public static $checkParentRights = self::HAVE_VIEW_RIGHT_ON_ITEM;
 
+    public static $pacoMollaSchedule = array(
+        '1' => '1º 7:55-8:50', '2' => '2º 8:50-9:45', '3' => '3º 9:45-10:50', '4' => '4º 11:00-11:55',
+        '5' => '5º 11:55-12:50', '6' => '6º 12:50-13:45', '7' => '7º 14:00-14:55', '8' => '8º 15:00-15:55',
+        '9' => '9º 15:55-16:50', '10' => '10º 16:50-17:45', '11' => '11º 18:05-19:00', '12' => '12º 19:00-19:55',
+        '13' => '13º 19:55-20:50'
+    );
 
     /**
      * @param $nb  integer  for singular or plural
@@ -183,8 +189,27 @@ class Reservation extends CommonDBChild
     }
 
     public static function handlePacoMollaSchedule(array &$input): void {
-        $input['resa']["begin"] = "2024-05-30 15:00:00";
-        $input['resa']["end"] = "2024-05-30 19:00:00";
+        // $input['resa']["begin"] = "2024-05-30 15:00:00";
+        // $input['resa']["end"] = "2024-05-30 19:00:00";
+
+        //Me quedo únicamente con la fecha (sin hora)
+        $beginDate = explode(' ', $input['resa']["begin"])[0];
+        $endDate = explode(' ', $input['resa']["end"])[0];
+
+        //Obtengo las horas del valor elegido en el input
+        $string = "1º 7:55-8:50";//TODO
+
+        // Primero, eliminamos la parte "1º "
+        $timePart = explode(' ', $string, 2)[1];
+
+        // Luego, separamos las dos horas usando el guion como delimitador
+        $times = explode('-', $timePart);
+
+        $firstHour = $times[0];
+        $secondHour = $times[1];
+
+        $input['resa']["begin"] = $beginDate . " " . $firstHour;
+        $input['resa']["end"] = $endDate . " " . $secondHour;
     }
 
     public static function handleAddForm(array $input): void
@@ -932,12 +957,7 @@ JAVASCRIPT;
         Alert::displayLastAlert('Reservation', $ID);
         $pruebas = Dropdown::showFromArray(
             "pm_schedule",
-            array(
-                '1' => '1º 7:55-8:50', '2' => '2º 8:50-9:45', '3' => '3º 9:45-10:50', '4' => '4º 11:00-11:55',
-                '5' => '5º 155:12:50', '6' => '6º 12:50-13:45', '7' => '7º 14:00-14:55', '8' => '8º 15:00-15:55',
-                '9' => '9º 15:55-16:50', '10' => '10º 16:50-17:45', '11' => '11º 18:05-19:00', '12' => '12º 19:00-19:55',
-                '13' => '13º 19:55-20:50'
-            )
+            $pacoMollaSchedule
         ,[
             "value" => '1'
         ]);
