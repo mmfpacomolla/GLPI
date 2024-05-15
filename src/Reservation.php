@@ -919,8 +919,8 @@ JAVASCRIPT;
             //'canedit' => false
         ]);
         echo "</td></tr>";
-        #PACO MOLLA - MODIFICATION -
         echo "<tr class='tab_bg_2'><td>" . __('Duration') . "</td><td>";
+        $default_delay = 0;
         $pruebas = Dropdown::showFromArray(
             "pm_schedule",
             Reservation::$pacoMollaSchedule
@@ -951,10 +951,10 @@ JAVASCRIPT;
         //     $params
         // );
 
-        // if ($default_delay == 0) {
-        //     $params['duration'] = 0;
-        //     Ajax::updateItem("date_end$rand", $CFG_GLPI["root_doc"] . "/ajax/planningend.php", $params);
-        // }
+        if ($default_delay == 0) {
+            $params['duration'] = 0;
+            Ajax::updateItem("date_end$rand", $CFG_GLPI["root_doc"] . "/ajax/planningend.php", $params);
+        }
         Alert::displayLastAlert('Reservation', $ID);
         echo "</td></tr>";
 
