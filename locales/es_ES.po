@@ -19610,6 +19610,7 @@ msgstr[1] "Activos reservables"
 #: src/Entity.php:2409 src/Reservation.php:56 src/Profile.php:2474
 msgid "Reservation"
 msgid_plural "Reservations"
+msgstr "Reservas"
 msgstr[0] "Reservas"
 #: msgstr[1] "Reservas"
 
