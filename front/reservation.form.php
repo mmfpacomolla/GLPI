@@ -59,7 +59,9 @@ if (isset($_REQUEST['ajax'])) {
 }
 
 if (isset($_POST["update"])) {
-    Toolbox::manageBeginAndEndPlanDates($_POST['resa']);
+    //Toolbox::manageBeginAndEndPlanDates($_POST['resa']);
+    #PACO MOLLA
+    Reservation::handlePacoMollaSchedule($_POST);
     if (
         Session::haveRight("reservation", UPDATE)
         || (Session::getLoginUserID() == $_POST["users_id"])
