@@ -182,7 +182,7 @@ class Reservation extends CommonDBChild
         return parent::prepareInputForAdd($input);
     }
 
-    public static function handlePacoMollaSchedule(array $input): array {
+    public static function handlePacoMollaSchedule(array $input): void {
         $input['resa']["begin"] = "2024-05-30 15:00:00";
         $input['resa']["end"] = "2024-05-30 19:00:00";
     }
