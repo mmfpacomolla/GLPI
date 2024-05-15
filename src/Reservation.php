@@ -957,7 +957,7 @@ JAVASCRIPT;
         Alert::displayLastAlert('Reservation', $ID);
         $pruebas = Dropdown::showFromArray(
             "pm_schedule",
-            $pacoMollaSchedule
+            Reservation::$pacoMollaSchedule
         ,[
             "value" => '1'
         ]);
