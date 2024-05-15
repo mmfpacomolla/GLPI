@@ -218,8 +218,9 @@ class Reservation extends CommonDBChild
 	) {
             return;
 	}
-
-        Toolbox::manageBeginAndEndPlanDates($input['resa']);
+        #PACO MOLLA
+        //Toolbox::manageBeginAndEndPlanDates($input['resa']);
+        Reservation::handlePacoMollaSchedule($input);
         if (!isset($input['resa']["begin"]) || !isset($input['resa']["end"])) {
             return;
         }
@@ -231,8 +232,6 @@ class Reservation extends CommonDBChild
                 ERROR
             );
         }
-
-        Reservation::handlePacoMollaSchedule($input);
 
         $dates_to_add = [];
         $dates_to_add[$input['resa']["begin"]] = $input['resa']["end"];
