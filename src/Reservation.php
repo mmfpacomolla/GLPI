@@ -919,18 +919,10 @@ JAVASCRIPT;
             //'canedit' => false
         ]);
         echo "</td></tr>";
+        $default_delay = floor((strtotime($resa->fields["end"]) - strtotime($resa->fields["begin"]))
+                             / $CFG_GLPI['time_step'] / MINUTE_TIMESTAMP)
+                       * $CFG_GLPI['time_step'] * MINUTE_TIMESTAMP;
         echo "<tr class='tab_bg_2'><td>" . __('Duration') . "</td><td>";
-        $default_delay = 0;
-        $pruebas = Dropdown::showFromArray(
-            "pm_schedule",
-            Reservation::$pacoMollaSchedule
-        ,[
-            "value" => '1'
-        ]);
-        // $default_delay = floor((strtotime($resa->fields["end"]) - strtotime($resa->fields["begin"]))
-        //                      / $CFG_GLPI['time_step'] / MINUTE_TIMESTAMP)
-        //                * $CFG_GLPI['time_step'] * MINUTE_TIMESTAMP;
-        // echo "<tr class='tab_bg_2'><td>" . __('Duration') . "</td><td>";
         // $rand = Dropdown::showTimeStamp("resa[_duration]", [
         //     'min'        => 0,
         //     'max'        => 24 * HOUR_TIMESTAMP,
@@ -938,18 +930,24 @@ JAVASCRIPT;
         //     'emptylabel' => __('Specify an end date'),
         //     'allow_max_change' => false
         // ]);
-        // echo "<br><div id='date_end$rand'></div>";
-        // $params = [
-        //     'duration'     => '__VALUE__',
-        //     'end'          => $resa->fields["end"],
-        //     'name'         => "resa[end]"
-        // ];
-        // Ajax::updateItemOnSelectEvent(
-        //     "dropdown_resa[_duration]$rand",
-        //     "date_end$rand",
-        //     $CFG_GLPI["root_doc"] . "/ajax/planningend.php",
-        //     $params
-        // );
+        $pruebas = Dropdown::showFromArray(
+            "pm_schedule",
+            Reservation::$pacoMollaSchedule
+        ,[
+            "value" => '1'
+        ]);
+        echo "<br><div id='date_end$rand'></div>";
+        $params = [
+            'duration'     => '__VALUE__',
+            'end'          => $resa->fields["end"],
+            'name'         => "resa[end]"
+        ];
+        Ajax::updateItemOnSelectEvent(
+            "dropdown_resa[_duration]$rand",
+            "date_end$rand",
+            $CFG_GLPI["root_doc"] . "/ajax/planningend.php",
+            $params
+        );
 
         if ($default_delay == 0) {
             $params['duration'] = 0;
