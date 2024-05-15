@@ -928,8 +928,7 @@ JAVASCRIPT;
             'max'        => 24 * HOUR_TIMESTAMP,
             'value'      => $default_delay,
             'emptylabel' => __('Specify an end date'),
-            'allow_max_change' => false,
-            'display' => false //PACO MOLLA
+            'allow_max_change' => false
         ]);
 
         #PACO MOLLA
