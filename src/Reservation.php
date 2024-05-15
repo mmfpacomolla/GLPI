@@ -189,9 +189,6 @@ class Reservation extends CommonDBChild
     }
 
     public static function handlePacoMollaSchedule(array &$input): void {
-        // $input['resa']["begin"] = "2024-05-30 15:00:00";
-        // $input['resa']["end"] = "2024-05-30 19:00:00";
-
         //Me quedo únicamente con la fecha (sin hora)
         $beginDate = explode(' ', $input['resa']["begin"])[0];
 
@@ -922,41 +919,43 @@ JAVASCRIPT;
             //'canedit' => false
         ]);
         echo "</td></tr>";
-        $default_delay = floor((strtotime($resa->fields["end"]) - strtotime($resa->fields["begin"]))
-                             / $CFG_GLPI['time_step'] / MINUTE_TIMESTAMP)
-                       * $CFG_GLPI['time_step'] * MINUTE_TIMESTAMP;
+        #PACO MOLLA - MODIFICATION -
         echo "<tr class='tab_bg_2'><td>" . __('Duration') . "</td><td>";
-        $rand = Dropdown::showTimeStamp("resa[_duration]", [
-            'min'        => 0,
-            'max'        => 24 * HOUR_TIMESTAMP,
-            'value'      => $default_delay,
-            'emptylabel' => __('Specify an end date'),
-            'allow_max_change' => false
-        ]);
-        echo "<br><div id='date_end$rand'></div>";
-        $params = [
-            'duration'     => '__VALUE__',
-            'end'          => $resa->fields["end"],
-            'name'         => "resa[end]"
-        ];
-        Ajax::updateItemOnSelectEvent(
-            "dropdown_resa[_duration]$rand",
-            "date_end$rand",
-            $CFG_GLPI["root_doc"] . "/ajax/planningend.php",
-            $params
-        );
-
-        if ($default_delay == 0) {
-            $params['duration'] = 0;
-            Ajax::updateItem("date_end$rand", $CFG_GLPI["root_doc"] . "/ajax/planningend.php", $params);
-        }
-        Alert::displayLastAlert('Reservation', $ID);
         $pruebas = Dropdown::showFromArray(
             "pm_schedule",
             Reservation::$pacoMollaSchedule
         ,[
             "value" => '1'
         ]);
+        // $default_delay = floor((strtotime($resa->fields["end"]) - strtotime($resa->fields["begin"]))
+        //                      / $CFG_GLPI['time_step'] / MINUTE_TIMESTAMP)
+        //                * $CFG_GLPI['time_step'] * MINUTE_TIMESTAMP;
+        // echo "<tr class='tab_bg_2'><td>" . __('Duration') . "</td><td>";
+        // $rand = Dropdown::showTimeStamp("resa[_duration]", [
+        //     'min'        => 0,
+        //     'max'        => 24 * HOUR_TIMESTAMP,
+        //     'value'      => $default_delay,
+        //     'emptylabel' => __('Specify an end date'),
+        //     'allow_max_change' => false
+        // ]);
+        // echo "<br><div id='date_end$rand'></div>";
+        // $params = [
+        //     'duration'     => '__VALUE__',
+        //     'end'          => $resa->fields["end"],
+        //     'name'         => "resa[end]"
+        // ];
+        // Ajax::updateItemOnSelectEvent(
+        //     "dropdown_resa[_duration]$rand",
+        //     "date_end$rand",
+        //     $CFG_GLPI["root_doc"] . "/ajax/planningend.php",
+        //     $params
+        // );
+
+        // if ($default_delay == 0) {
+        //     $params['duration'] = 0;
+        //     Ajax::updateItem("date_end$rand", $CFG_GLPI["root_doc"] . "/ajax/planningend.php", $params);
+        // }
+        Alert::displayLastAlert('Reservation', $ID);
         echo "</td></tr>";
 
 	//PACO MOLLA - MODIFICATION - Evitar que se pueda reservar con periodicidad
