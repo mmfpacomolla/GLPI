@@ -584,7 +584,7 @@ class ReservationItem extends CommonDBChild
         echo "<table class='card-table table table-hover'>";
         echo "<tr>";
         echo "<th style='width: 30px;'>" . Html::getCheckAllAsCheckbox('nosearch') . "</th>";
-        echo "<th>" . Session::getPluralNumber() . " | " . self::getTypeName(Session::getPluralNumber()) . "</th>";
+        echo "<th>" . self::getTypeName(Session::getPluralNumber()) . "</th>";
         echo "<th>" . Location::getTypeName(1) . "</th>";
         echo "<th>" . _n('Comment', 'Comments', 1) . "</th>";
         if ($showentity) {
